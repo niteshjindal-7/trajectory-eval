@@ -68,8 +68,12 @@ def search_adverse_events(drug_name: str, limit: int = 10) -> dict:
     url = f"{OPENFDA_BASE_URL}/drug/event.json"
 
     # Step 1: Get top reactions (count/aggregate mode)
+    # Single OR query — works whether user passes generic name or brand name
     params = _build_params(
-        search=f'patient.drug.openfda.generic_name:"{drug_name}"',
+        search=(
+            f'patient.drug.openfda.generic_name:"{drug_name}"'
+            f'+patient.drug.openfda.brand_name:"{drug_name}"'
+        ),
         extra={
             "count": "patient.reaction.reactionmeddrapt.exact",
             "limit": limit
@@ -82,22 +86,35 @@ def search_adverse_events(drug_name: str, limit: int = 10) -> dict:
     except Exception as e:
         return {"error": str(e), "drug": drug_name}
 
-    if "error" in reaction_data:
-        # Try brand name if generic name not found
-        params["search"] = f'patient.drug.openfda.brand_name:"{drug_name}"'
-        try:
-            response = requests.get(url, params=params, timeout=10)
-            reaction_data = response.json()
-        except Exception as e:
-            return {"error": str(e), "drug": drug_name}
+    if not reaction_data.get("results"):
+        return {"error": f"Drug '{drug_name}' not found in FDA database"}
 
-    # Step 2: Get total report count and serious event count
-    count_params = _build_params(
-        search=f'patient.drug.openfda.generic_name:"{drug_name}"+AND+serious:1',
+    # Step 2: Get total reports (all — serious + non-serious)
+    total_params = _build_params(
+        search=(
+            f'patient.drug.openfda.generic_name:"{drug_name}"'
+            f'+patient.drug.openfda.brand_name:"{drug_name}"'
+        ),
         extra={"limit": 1}
     )
     try:
-        serious_response = requests.get(url, params=count_params, timeout=10)
+        total_response = requests.get(url, params=total_params, timeout=10)
+        total_data = total_response.json()
+        total_reports = total_data.get("meta", {}).get("results", {}).get("total", 0)
+    except Exception:
+        total_reports = "unavailable"
+
+    # Step 3: Get serious report count only
+    serious_params = _build_params(
+        search=(
+            f'patient.drug.openfda.generic_name:"{drug_name}"'
+            f'+patient.drug.openfda.brand_name:"{drug_name}"'
+            f'+AND+serious:1'
+        ),
+        extra={"limit": 1}
+    )
+    try:
+        serious_response = requests.get(url, params=serious_params, timeout=10)
         serious_data = serious_response.json()
         serious_count = serious_data.get("meta", {}).get("results", {}).get("total", 0)
     except Exception:
@@ -105,9 +122,9 @@ def search_adverse_events(drug_name: str, limit: int = 10) -> dict:
 
     return {
         "drug": drug_name,
-        "total_reports": reaction_data.get("meta", {}).get("results", {}).get("total", 0),
-        "top_reactions": reaction_data.get("results", []),
+        "total_reports": total_reports,
         "serious_count": serious_count,
+        "top_reactions": reaction_data.get("results", []),
         "note": "These are voluntary reports to FDA — suspicion of cause, not confirmed."
     }
 
