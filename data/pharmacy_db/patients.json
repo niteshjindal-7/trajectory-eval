@@ -1,0 +1,50 @@
+[
+  {
+    "patient_id": "P001",
+    "name": "John Smith",
+    "age": 72,
+    "sex": "male",
+    "conditions": ["atrial fibrillation", "hypertension"],
+    "current_medications": ["warfarin", "lisinopril"],
+    "insurance": "Medicare Part D",
+    "last_visit": "2026-09-15",
+    "allergies": ["penicillin"],
+    "pharmacy_notes": "High fall risk — monitor INR closely"
+  },
+  {
+    "patient_id": "P002",
+    "name": "Mary Johnson",
+    "age": 58,
+    "sex": "female",
+    "conditions": ["type 2 diabetes", "hyperlipidaemia"],
+    "current_medications": ["metformin", "atorvastatin"],
+    "insurance": "Medicare Part D",
+    "last_visit": "2026-09-20",
+    "allergies": [],
+    "pharmacy_notes": "Recently switched from Lipitor to generic atorvastatin"
+  },
+  {
+    "patient_id": "P003",
+    "name": "Robert Chen",
+    "age": 45,
+    "sex": "male",
+    "conditions": ["hypertension"],
+    "current_medications": ["lisinopril", "aspirin"],
+    "insurance": "Commercial",
+    "last_visit": "2026-08-30",
+    "allergies": ["sulfa drugs"],
+    "pharmacy_notes": "Takes aspirin for cardiovascular prevention"
+  },
+  {
+    "patient_id": "P004",
+    "name": "Sarah Williams",
+    "age": 34,
+    "sex": "female",
+    "conditions": ["hypothyroidism"],
+    "current_medications": ["levothyroxine"],
+    "insurance": "Medicaid",
+    "last_visit": "2026-10-01",
+    "allergies": [],
+    "pharmacy_notes": "Pregnant — 12 weeks. All medications reviewed"
+  }
+]
