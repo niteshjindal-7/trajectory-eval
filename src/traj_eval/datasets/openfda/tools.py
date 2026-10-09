@@ -215,7 +215,10 @@ def check_drug_recall(drug_name: str, status: str = "Ongoing") -> dict:
     - Verifying if a drug is under active recall before dispensing
     - Finding the reason for a recall (contamination, mislabelling, etc.)
     - Checking recall classification (Class I = most serious)
-    - Determining distribution scope of a recall
+    - Determining distribution scope of a recall (nationwide vs specific states)
+    - Finding which manufacturer (firm) initiated the recall
+    - Checking if a recall was voluntary or FDA-mandated
+    - Finding when a recall was initiated and its current status
 
     Recall Classifications:
       Class I  → Serious health hazard — may cause death or serious injury
