@@ -142,6 +142,7 @@ def get_drug_label(drug_name: str) -> dict:
     - Getting drug interaction information
     - Finding dosage instructions or storage requirements
     - Checking safety for specific populations (elderly, pregnant, children)
+    - Finding side effects observed in clinical trials (adverse_reactions)
 
     Args:
         drug_name: Generic or brand name of the drug (e.g., "warfarin", "metformin")
@@ -163,8 +164,12 @@ def get_drug_label(drug_name: str) -> dict:
           - adverse_reactions: side effects from clinical trials
     """
     url = f"{OPENFDA_BASE_URL}/drug/label.json"
+    # Single OR query — works whether user passes generic name or brand name
     params = _build_params(
-        search=f'openfda.generic_name:"{drug_name}"',
+        search=(
+            f'openfda.generic_name:"{drug_name}"'
+            f'+openfda.brand_name:"{drug_name}"'
+        ),
         extra={"limit": 1}
     )
 
@@ -173,15 +178,6 @@ def get_drug_label(drug_name: str) -> dict:
         data = response.json()
     except Exception as e:
         return {"error": str(e), "drug": drug_name}
-
-    if "error" in data or not data.get("results"):
-        # Try brand name
-        params["search"] = f'openfda.brand_name:"{drug_name}"'
-        try:
-            response = requests.get(url, params=params, timeout=10)
-            data = response.json()
-        except Exception as e:
-            return {"error": str(e), "drug": drug_name}
 
     if not data.get("results"):
         return {"error": f"No label found for drug: {drug_name}", "drug": drug_name}
