@@ -315,7 +315,17 @@ def get_patient_record(patient_id: str) -> dict:
         patient_id: Patient identifier (e.g., "P001", "P002")
 
     Returns:
-        dict with patient demographics, conditions, and current medications
+        dict with:
+          - patient_id: unique patient identifier (e.g., "P001")
+          - name: patient full name
+          - age: patient age in years
+          - sex: "male" or "female"
+          - conditions: list of medical conditions (e.g., ["atrial fibrillation", "hypertension"])
+          - current_medications: list of drug names the patient is currently taking
+          - insurance: insurance type (e.g., "Medicare Part D", "Commercial")
+          - last_visit: date of last pharmacy visit (YYYY-MM-DD)
+          - allergies: list of known drug allergies (empty list if none)
+          - pharmacy_notes: pharmacist notes about this patient
     """
     try:
         db_path = os.path.abspath(PATIENTS_DB_PATH)
