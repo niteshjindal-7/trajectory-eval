@@ -230,9 +230,19 @@ def check_drug_recall(drug_name: str, status: str = "Ongoing") -> dict:
     Returns:
         dict with:
           - drug: name searched
-          - active_recalls_found: boolean
-          - total_recalls: number of matching recalls
-          - recalls: list of recall records with reason, classification, status
+          - status_filter: which status was applied ("Ongoing", "Terminated", "all")
+          - active_recalls_found: True if any recalls found, False if none
+          - total_recalls: total number of matching recalls in FDA database
+          - recalls: list of up to 5 recall records, each containing:
+              - recall_number: unique FDA recall identifier
+              - status: "Ongoing" or "Terminated"
+              - classification: "Class I", "Class II", or "Class III"
+              - reason_for_recall: why it was recalled (e.g., NDMA contamination)
+              - product_description: exact product name, strength, lot number
+              - recalling_firm: manufacturer who initiated the recall
+              - recall_initiation_date: when recall started (YYYYMMDD format)
+              - distribution_pattern: geographic scope (e.g., "Nationwide")
+              - voluntary_mandated: "Voluntary" or "Mandated" by FDA
     """
     url = f"{OPENFDA_BASE_URL}/drug/enforcement.json"
 
