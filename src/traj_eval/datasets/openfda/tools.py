@@ -249,7 +249,11 @@ def check_drug_recall(drug_name: str, status: str = "Ongoing") -> dict:
     """
     url = f"{OPENFDA_BASE_URL}/drug/enforcement.json"
 
-    search = f'openfda.generic_name:"{drug_name}"'
+    # Single OR query — works whether user passes generic name or brand name
+    search = (
+        f'openfda.generic_name:"{drug_name}"'
+        f'+openfda.brand_name:"{drug_name}"'
+    )
     if status:
         search += f'+AND+status:"{status}"'
 
@@ -261,17 +265,8 @@ def check_drug_recall(drug_name: str, status: str = "Ongoing") -> dict:
     except Exception as e:
         return {"error": str(e), "drug": drug_name}
 
-    if "error" in data:
-        # Try brand name
-        search = f'openfda.brand_name:"{drug_name}"'
-        if status:
-            search += f'+AND+status:"{status}"'
-        params["search"] = search
-        try:
-            response = requests.get(url, params=params, timeout=10)
-            data = response.json()
-        except Exception as e:
-            return {"error": str(e), "drug": drug_name}
+    if not data.get("results"):
+        return {"error": f"No recalls found for drug: {drug_name}", "drug": drug_name}
 
     results = data.get("results", [])
     total = data.get("meta", {}).get("results", {}).get("total", 0)
