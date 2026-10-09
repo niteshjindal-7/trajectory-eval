@@ -1,6 +1,6 @@
 """
 OpenFDA Tool Definitions — Healthcare / Pharmacy Domain
-medicalCounsellorAgent — Phase 1 PoC
+RxSafetyAgent — Phase 1 PoC
 
 These tools are registered with the LangGraph agent.
 The LLM reads each tool's docstring to decide WHEN to call it.
