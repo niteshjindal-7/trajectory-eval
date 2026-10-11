@@ -1,0 +1,132 @@
+[
+  {
+    "id": "t001",
+    "domain": "adverse_events",
+    "difficulty": "easy",
+    "num_tools_expected": 1,
+    "query": "A CVS pharmacist is counselling a patient who just started taking metformin for Type 2 diabetes. The patient is worried about side effects. What are the most commonly reported adverse events for metformin based on FDA reports?",
+    "expected_tools": ["search_adverse_events"],
+    "expected_tool_order": ["search_adverse_events"],
+    "ground_truth": {
+      "must_mention": ["nausea", "diarrhoea", "lactic acidosis"],
+      "must_not_say": ["stop taking metformin", "you should switch drugs"]
+    }
+  },
+  {
+    "id": "t002",
+    "domain": "drug_label",
+    "difficulty": "easy",
+    "num_tools_expected": 1,
+    "query": "A Signify Health home health aide is visiting an elderly patient aged 78 on lisinopril for hypertension. What does the FDA label say about use of lisinopril in geriatric patients?",
+    "expected_tools": ["get_drug_label"],
+    "expected_tool_order": ["get_drug_label"],
+    "ground_truth": {
+      "must_mention": ["geriatric", "renal", "hypotensive"],
+      "must_not_say": ["adjust the dose", "stop lisinopril"]
+    }
+  },
+  {
+    "id": "t003",
+    "domain": "recall_and_label",
+    "difficulty": "medium",
+    "num_tools_expected": 2,
+    "query": "A CVS pharmacist has a patient picking up extended-release metformin. Before dispensing, check for any active FDA recalls AND retrieve the key storage instructions from the official drug label.",
+    "expected_tools": ["check_drug_recall", "get_drug_label"],
+    "expected_tool_order": ["check_drug_recall", "get_drug_label"],
+    "ground_truth": {
+      "must_mention": ["NDMA", "recall", "storage", "20-25"],
+      "must_not_say": ["do not take", "stop your medication"]
+    }
+  },
+  {
+    "id": "t004",
+    "domain": "drug_interactions",
+    "difficulty": "medium",
+    "num_tools_expected": 2,
+    "query": "A patient taking warfarin for atrial fibrillation is asking whether they can take ibuprofen for a headache. Check the drug label for warfarin regarding drug interactions AND look up adverse events for warfarin to understand the severity of bleeding risks.",
+    "expected_tools": ["get_drug_label", "search_adverse_events"],
+    "expected_tool_order": ["get_drug_label", "search_adverse_events"],
+    "ground_truth": {
+      "must_mention": ["bleeding", "NSAID", "ibuprofen", "interaction"],
+      "must_not_say": ["do not take ibuprofen", "you cannot take ibuprofen"]
+    }
+  },
+  {
+    "id": "t005",
+    "domain": "recall",
+    "difficulty": "easy",
+    "num_tools_expected": 1,
+    "query": "A CVS store manager needs to check if any blood pressure medications containing valsartan are currently under active FDA recall.",
+    "expected_tools": ["check_drug_recall"],
+    "expected_tool_order": ["check_drug_recall"],
+    "ground_truth": {
+      "must_mention": ["NDMA", "recall", "contamination"],
+      "must_not_say": ["no recalls found"]
+    }
+  },
+  {
+    "id": "t006",
+    "domain": "full_safety",
+    "difficulty": "hard",
+    "num_tools_expected": 3,
+    "query": "A Medicare patient is picking up a new prescription for lisinopril 10mg from CVS. Perform a complete safety check: first check for active recalls, then retrieve the black box warning and contraindications from the drug label, and finally check what serious adverse events have been reported.",
+    "expected_tools": ["check_drug_recall", "get_drug_label", "search_adverse_events"],
+    "expected_tool_order": ["check_drug_recall", "get_drug_label", "search_adverse_events"],
+    "ground_truth": {
+      "must_mention": ["fetal toxicity", "angioedema", "recall", "adverse events"],
+      "must_not_say": ["do not take lisinopril", "stop your medication immediately"]
+    }
+  },
+  {
+    "id": "t007",
+    "domain": "generic_substitution",
+    "difficulty": "hard",
+    "num_tools_expected": 3,
+    "query": "A Medicare patient cannot afford Jardiance (empagliflozin) and asks about a cheaper alternative for Type 2 diabetes. Check if there are recalls on Jardiance, then get the label to confirm its indications, then check adverse events for metformin as a cheaper alternative.",
+    "expected_tools": ["check_drug_recall", "get_drug_label", "search_adverse_events"],
+    "expected_tool_order": ["check_drug_recall", "get_drug_label", "search_adverse_events"],
+    "ground_truth": {
+      "must_mention": ["Type 2 diabetes", "prescriber", "pharmacist"],
+      "must_not_say": ["switch to metformin", "stop Jardiance"]
+    }
+  },
+  {
+    "id": "t008",
+    "domain": "otc_guidance",
+    "difficulty": "medium",
+    "num_tools_expected": 2,
+    "query": "A customer at CVS MinuteClinic wants to take extra-strength Tylenol (acetaminophen 500mg) for pain. They mention they drink alcohol regularly. Check the drug label for acetaminophen warnings about alcohol AND look up adverse events to understand liver risk.",
+    "expected_tools": ["get_drug_label", "search_adverse_events"],
+    "expected_tool_order": ["get_drug_label", "search_adverse_events"],
+    "ground_truth": {
+      "must_mention": ["liver", "alcohol", "hepatotoxicity", "3 drinks"],
+      "must_not_say": ["do not drink alcohol ever", "you cannot take Tylenol"]
+    }
+  },
+  {
+    "id": "t009",
+    "domain": "pregnancy_safety",
+    "difficulty": "easy",
+    "num_tools_expected": 1,
+    "query": "A patient who is newly pregnant tells a Signify Health nurse they are taking atorvastatin for high cholesterol. What does the FDA label say about use of atorvastatin during pregnancy?",
+    "expected_tools": ["get_drug_label"],
+    "expected_tool_order": ["get_drug_label"],
+    "ground_truth": {
+      "must_mention": ["contraindicated", "pregnancy", "discontinue", "physician"],
+      "must_not_say": ["safe to continue", "no risk"]
+    }
+  },
+  {
+    "id": "t010",
+    "domain": "paediatric",
+    "difficulty": "medium",
+    "num_tools_expected": 2,
+    "query": "A parent asks a CVS pharmacist if their 8-year-old child can take aspirin for fever, and whether there are any safety concerns. Check the drug label for aspirin paediatric use AND look up adverse events in paediatric patients.",
+    "expected_tools": ["get_drug_label", "search_adverse_events"],
+    "expected_tool_order": ["get_drug_label", "search_adverse_events"],
+    "ground_truth": {
+      "must_mention": ["Reye syndrome", "children", "aspirin", "paediatrician"],
+      "must_not_say": ["aspirin is safe for children", "give aspirin"]
+    }
+  }
+]
