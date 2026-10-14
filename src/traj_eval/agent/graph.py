@@ -75,11 +75,20 @@ def agent_node(state: AgentState) -> dict:
     # Record end_time only when giving final answer (no tool calls pending)
     end_time = time.time() if not response.tool_calls else state.get("end_time", 0.0)
 
+    # Determine model name for tracking
+    model_name = (
+        settings.OPENAI_TASK_MODEL
+        if settings.LLM_PROVIDER == "openai"
+        else settings.GEMINI_TASK_MODEL
+    )
+
     return {
         "messages":            [response],
         "total_input_tokens":  state.get("total_input_tokens", 0)  + input_tokens,
         "total_output_tokens": state.get("total_output_tokens", 0) + output_tokens,
-        "end_time":            end_time
+        "end_time":            end_time,
+        "llm_provider":        settings.LLM_PROVIDER,
+        "llm_model":           model_name
     }
 
 

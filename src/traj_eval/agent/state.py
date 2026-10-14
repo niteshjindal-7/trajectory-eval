@@ -39,6 +39,15 @@ class AgentState(TypedDict):
     # Which dataset/domain e.g. "openfda", "tau_bench"
     # Allows same graph to work across different domains
 
+    # ── Model Tracking ────────────────────────────────────────────────────────
+    llm_provider: str
+    # Which LLM provider was used e.g. "openai", "gemini"
+    # Critical for comparing results across providers in research
+
+    llm_model: str
+    # Exact model name used e.g. "gpt-4o-mini", "gemini-3.1-flash-lite"
+    # Ensures every result is traceable to the exact model version
+
     # ── Safety Limit ──────────────────────────────────────────────────────────
     steps_taken: int
     # Increments by 1 each time tool_node executes
