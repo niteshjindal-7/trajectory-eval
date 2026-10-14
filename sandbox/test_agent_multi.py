@@ -5,8 +5,8 @@ Task: Full safety check for lisinopril (recall + label + adverse events)
 
 import time
 from langchain_core.messages import HumanMessage
-from src.traj_eval.agent.graph import app
-from src.traj_eval.utils.config import settings
+from traj_eval.agent.graph import app
+from traj_eval.utils.config import settings
 
 print("=" * 50)
 print("Provider:", settings.LLM_PROVIDER)

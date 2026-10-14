@@ -2,8 +2,8 @@
 
 import time
 from langchain_core.messages import HumanMessage
-from src.traj_eval.agent.graph import app
-from src.traj_eval.utils.config import settings
+from traj_eval.agent.graph import app
+from traj_eval.utils.config import settings
 
 # Show which model is being used
 print("=" * 50)
