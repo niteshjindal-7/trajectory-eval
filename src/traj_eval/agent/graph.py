@@ -22,23 +22,23 @@ from langgraph.prebuilt import ToolNode
 
 from traj_eval.agent.state import AgentState
 from traj_eval.tools.openfda.tools import OPENFDA_TOOLS
-from traj_eval.utils.config import settings
+from traj_eval.utils.config import config
 
 
 # ── 1. LLM with tools bound ───────────────────────────────────────────────────
 # Switch between Gemini and OpenAI via LLM_PROVIDER in .env
 
-if settings.LLM_PROVIDER == "openai":
+if config.LLM_PROVIDER == "openai":
     from langchain_openai import ChatOpenAI
     llm = ChatOpenAI(
-        model=settings.OPENAI_TASK_MODEL,
-        api_key=settings.OPENAI_API_KEY
+        model=config.OPENAI_TASK_MODEL,
+        api_key=config.OPENAI_API_KEY
     )
 else:
     from langchain_google_genai import ChatGoogleGenerativeAI
     llm = ChatGoogleGenerativeAI(
-        model=settings.GEMINI_TASK_MODEL,
-        google_api_key=settings.GEMINI_API_KEY
+        model=config.GEMINI_TASK_MODEL,
+        google_api_key=config.GEMINI_API_KEY
     )
 
 llm_with_tools = llm.bind_tools(OPENFDA_TOOLS)
@@ -77,9 +77,9 @@ def agent_node(state: AgentState) -> dict:
 
     # Determine model name for tracking
     model_name = (
-        settings.OPENAI_TASK_MODEL
-        if settings.LLM_PROVIDER == "openai"
-        else settings.GEMINI_TASK_MODEL
+        config.OPENAI_TASK_MODEL
+        if config.LLM_PROVIDER == "openai"
+        else config.GEMINI_TASK_MODEL
     )
 
     return {
@@ -87,7 +87,7 @@ def agent_node(state: AgentState) -> dict:
         "total_input_tokens":  state.get("total_input_tokens", 0)  + input_tokens,
         "total_output_tokens": state.get("total_output_tokens", 0) + output_tokens,
         "end_time":            end_time,
-        "llm_provider":        settings.LLM_PROVIDER,
+        "llm_provider":        config.LLM_PROVIDER,
         "llm_model":           model_name
     }
 
@@ -141,7 +141,7 @@ def should_continue(state: AgentState) -> str:
 
     if last_message.tool_calls:
         # Agent wants to call a tool — but check safety limit first
-        if state.get("steps_taken", 0) >= state.get("max_steps", settings.MAX_STEPS):
+        if state.get("steps_taken", 0) >= state.get("max_steps", config.MAX_STEPS):
             return "end"   # force stop — prevents infinite loops
         return "continue"
 

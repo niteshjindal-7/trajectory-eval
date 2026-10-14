@@ -6,11 +6,11 @@ Task: Full safety check for lisinopril (recall + label + adverse events)
 import time
 from langchain_core.messages import HumanMessage
 from traj_eval.agent.graph import app
-from traj_eval.utils.config import settings
+from traj_eval.utils.config import config
 
 print("=" * 50)
-print("Provider:", settings.LLM_PROVIDER)
-print("Model:   ", settings.OPENAI_TASK_MODEL if settings.LLM_PROVIDER == "openai" else settings.GEMINI_TASK_MODEL)
+print("Provider:", config.LLM_PROVIDER)
+print("Model:   ", config.OPENAI_TASK_MODEL if config.LLM_PROVIDER == "openai" else config.GEMINI_TASK_MODEL)
 print("=" * 50)
 
 start = time.time()
@@ -31,8 +31,8 @@ result = app.invoke({
     "start_time": start,
     "end_time": 0.0,
     "step_latencies": [],
-    "llm_provider": settings.LLM_PROVIDER,
-    "llm_model": settings.OPENAI_TASK_MODEL if settings.LLM_PROVIDER == "openai" else settings.GEMINI_TASK_MODEL
+    "llm_provider": config.LLM_PROVIDER,
+    "llm_model": config.OPENAI_TASK_MODEL if config.LLM_PROVIDER == "openai" else config.GEMINI_TASK_MODEL
 })
 
 total_ms = round((time.time() - start) * 1000)

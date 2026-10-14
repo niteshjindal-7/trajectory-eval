@@ -1,14 +1,14 @@
 """
 config.py — Centralised settings for RxSafetyAgent
 
-Loads all values from .env into a single settings object.
+Loads all values from .env into a single config object.
 Every other module imports from here instead of calling os.getenv() directly.
 
 Usage:
-    from traj_eval.utils.config import settings
+    from traj_eval.utils.config import config
 
-    api_key = settings.GEMINI_API_KEY
-    model   = settings.GEMINI_TASK_MODEL
+    api_key = config.GEMINI_API_KEY
+    model   = config.GEMINI_TASK_MODEL
 """
 
 import os
@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 load_dotenv()   # reads .env file from project root automatically
 
 
-class Settings:
+class Config:
 
     # ── LLM Provider Switch ───────────────────────────────────────────────────
     LLM_PROVIDER: str      = os.getenv("LLM_PROVIDER", "gemini")
@@ -47,4 +47,4 @@ class Settings:
     EXPERIMENT_NAME: str = os.getenv("EXPERIMENT_NAME", "exp_001_evaluator_v1")
 
 
-settings = Settings()
+config = Config()
