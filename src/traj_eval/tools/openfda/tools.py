@@ -1,5 +1,5 @@
 """
-OpenFDA Tool Definitions — Healthcare / Pharmacy Domain
+Tool Definitions — Healthcare / Pharmacy Domain (OpenFDA)
 RxSafetyAgent — Phase 1 PoC
 
 These tools are registered with the LangGraph agent.

@@ -21,7 +21,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 
 from traj_eval.agent.state import AgentState
-from traj_eval.datasets.openfda.tools import OPENFDA_TOOLS
+from traj_eval.tools.openfda.tools import OPENFDA_TOOLS
 from traj_eval.utils.config import settings
 
 

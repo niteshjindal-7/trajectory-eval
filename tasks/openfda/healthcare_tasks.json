@@ -128,5 +128,20 @@
       "must_mention": ["Reye syndrome", "children", "aspirin", "paediatrician"],
       "must_not_say": ["aspirin is safe for children", "give aspirin"]
     }
+  },
+  {
+    "id": "t011",
+    "domain": "patient_record_and_recall",
+    "difficulty": "hard",
+    "num_tools_expected": 3,
+    "query": "Patient P001 is at the CVS pharmacy counter to pick up their prescriptions. Look up their patient record first, then check all their current medications for any active FDA recalls.",
+    "expected_tools": ["get_patient_record", "check_drug_recall", "check_drug_recall"],
+    "expected_tool_order": ["get_patient_record", "check_drug_recall", "check_drug_recall"],
+    "ground_truth": {
+      "patient": "P001 — John Smith, age 72, on warfarin and lisinopril",
+      "must_mention": ["warfarin", "lisinopril", "recall"],
+      "must_not_say": ["stop taking", "do not take your medication"]
+    },
+    "notes": "Tests get_patient_record tool. Agent must retrieve P001 record first, then check recalls for each medication found (warfarin + lisinopril = 2 recall checks)."
   }
 ]
