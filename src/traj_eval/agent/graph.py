@@ -19,7 +19,6 @@ import time
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
-from langchain_google_genai import ChatGoogleGenerativeAI
 
 from traj_eval.agent.state import AgentState
 from traj_eval.datasets.openfda.tools import OPENFDA_TOOLS
@@ -27,11 +26,21 @@ from traj_eval.utils.config import settings
 
 
 # ── 1. LLM with tools bound ───────────────────────────────────────────────────
+# Switch between Gemini and OpenAI via LLM_PROVIDER in .env
 
-llm = ChatGoogleGenerativeAI(
-    model=settings.GEMINI_TASK_MODEL,
-    google_api_key=settings.GEMINI_API_KEY
-)
+if settings.LLM_PROVIDER == "openai":
+    from langchain_openai import ChatOpenAI
+    llm = ChatOpenAI(
+        model=settings.OPENAI_TASK_MODEL,
+        api_key=settings.OPENAI_API_KEY
+    )
+else:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+    llm = ChatGoogleGenerativeAI(
+        model=settings.GEMINI_TASK_MODEL,
+        google_api_key=settings.GEMINI_API_KEY
+    )
+
 llm_with_tools = llm.bind_tools(OPENFDA_TOOLS)
 # LLM now knows all 4 tools by name and can request them via tool_calls
 
