@@ -14,7 +14,12 @@ print("=" * 50)
 start = time.time()
 
 result = app.invoke({
-    "messages": [HumanMessage("Check if warfarin has any active FDA recalls.")],
+    "messages": [HumanMessage(
+        "A Medicare patient is picking up lisinopril 10mg from CVS. "
+        "Perform a complete safety check: first check for any active FDA recalls, "
+        "then retrieve the black box warning and contraindications from the drug label, "
+        "and finally check what serious adverse events have been reported for lisinopril."
+    )],
     "task_id": "test",
     "dataset": "openfda",
     "steps_taken": 0,
