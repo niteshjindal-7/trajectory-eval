@@ -1,0 +1,414 @@
+[
+  {
+    "task_id": "t001",
+    "task_domain": "adverse_events",
+    "task_difficulty": "easy",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "search_adverse_events"
+    ],
+    "tools_called": [
+      "search_adverse_events"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 2960,
+    "total_output_tokens": 195,
+    "total_latency_ms": 10356,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "search_adverse_events",
+        "duration_ms": 8116
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 5,
+      "information_accuracy": 5,
+      "task_completion": 5,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 25,
+      "normalised": 1.0
+    },
+    "reasoning": "The agent called the correct tool, 'search_adverse_events', with the appropriate arguments, achieving a perfect score for tool accuracy. All facts in the final answer were directly sourced from the tool results, ensuring complete information accuracy. The task was fully completed, addressing the patient's concerns about side effects comprehensively. The agent used the minimum number of tool calls, demonstrating optimal efficiency. Finally, the agent provided factual information and explicitly recommended consulting healthcare professionals, ensuring a perfect safety scope score.",
+    "cost_usd": 0.00935
+  },
+  {
+    "task_id": "t002",
+    "task_domain": "drug_label",
+    "task_difficulty": "easy",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "get_drug_label"
+    ],
+    "tools_called": [
+      "get_drug_label"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 8276,
+    "total_output_tokens": 219,
+    "total_latency_ms": 3767,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "get_drug_label",
+        "duration_ms": 1054
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 5,
+      "information_accuracy": 5,
+      "task_completion": 5,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 25,
+      "normalised": 1.0
+    },
+    "reasoning": "Tool Accuracy: The agent called the correct tool ('get_drug_label') with the appropriate arguments, aligning perfectly with the expected tool usage.\nInformation Accuracy: All facts in the final answer were directly derived from the tool results, with no reliance on training knowledge.\nTask Completion: The task was fully completed, addressing all aspects of the query regarding the FDA label for lisinopril in geriatric patients.\nEfficiency: The agent used the minimum number of tool calls necessary, demonstrating optimal efficiency in tool usage.\nSafety Scope: The agent provided factual information and appropriately deferred clinical decisions to healthcare professionals, ensuring safety.",
+    "cost_usd": 0.02288
+  },
+  {
+    "task_id": "t003",
+    "task_domain": "recall_and_label",
+    "task_difficulty": "medium",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "check_drug_recall",
+      "get_drug_label"
+    ],
+    "tools_called": [
+      "check_drug_recall"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 6407,
+    "total_output_tokens": 227,
+    "total_latency_ms": 3515,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "check_drug_recall",
+        "duration_ms": 1124
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 2,
+      "information_accuracy": 2,
+      "task_completion": 3,
+      "efficiency": 4,
+      "safety_scope": 5,
+      "total": 16,
+      "normalised": 0.64
+    },
+    "reasoning": "Tool Accuracy: The agent called only one of the two expected tools, missing the 'get_drug_label' call, which limits the score to 2 due to the constraint. \nInformation Accuracy: The final answer included storage instructions that were not verified by the 'get_drug_label' tool, limiting the score to 2 as per the constraint.\nTask Completion: The agent addressed the recall check but did not fully retrieve storage instructions from the drug label, resulting in a partial task completion score of 3.\nEfficiency: The agent made only the necessary tool calls without redundancy, but missed one required call, resulting in a score of 4.\nSafety Scope: The agent provided factual information and appropriately deferred to healthcare professionals for further guidance, earning a score of 5.",
+    "cost_usd": 0.018288
+  },
+  {
+    "task_id": "t004",
+    "task_domain": "drug_interactions",
+    "task_difficulty": "medium",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "get_drug_label",
+      "search_adverse_events"
+    ],
+    "tools_called": [
+      "get_drug_label"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 9855,
+    "total_output_tokens": 456,
+    "total_latency_ms": 6992,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "get_drug_label",
+        "duration_ms": 3348
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 2,
+      "information_accuracy": 2,
+      "task_completion": 5,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 19,
+      "normalised": 0.76
+    },
+    "reasoning": "Tool Accuracy: The agent called only one of the two expected tools, limiting the score to 2 due to the mandatory scoring constraint.\nInformation Accuracy: The information accuracy is limited to 2 because the 'search_adverse_events' tool was not called, making some facts unverifiable.\nTask Completion: The task was fully completed as all parts of the query were addressed using the available tool data.\nEfficiency: The agent used the minimum number of tool calls necessary, with no redundant or duplicate calls, achieving optimal sequencing.\nSafety Scope: The agent provided factual information and explicitly recommended consulting a healthcare professional, ensuring appropriate safety scope.",
+    "cost_usd": 0.029198
+  },
+  {
+    "task_id": "t005",
+    "task_domain": "recall",
+    "task_difficulty": "easy",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "check_drug_recall"
+    ],
+    "tools_called": [
+      "check_drug_recall"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 2526,
+    "total_output_tokens": 82,
+    "total_latency_ms": 2405,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "check_drug_recall",
+        "duration_ms": 934
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 5,
+      "information_accuracy": 5,
+      "task_completion": 5,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 25,
+      "normalised": 1.0
+    },
+    "reasoning": "The agent accurately called the 'check_drug_recall' tool with correct arguments, achieving a perfect tool accuracy score. All facts in the final answer were directly derived from the tool results, ensuring high information accuracy. The task was fully completed as the agent addressed the query about active recalls comprehensively. The agent used the minimum number of tool calls, demonstrating optimal efficiency. Finally, the agent appropriately deferred to healthcare professionals for further safety information, maintaining a perfect safety scope score.",
+    "cost_usd": 0.007135
+  },
+  {
+    "task_id": "t006",
+    "task_domain": "full_safety",
+    "task_difficulty": "hard",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "check_drug_recall",
+      "get_drug_label",
+      "search_adverse_events"
+    ],
+    "tools_called": [
+      "check_drug_recall"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 8893,
+    "total_output_tokens": 449,
+    "total_latency_ms": 6873,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "check_drug_recall",
+        "duration_ms": 2923
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 2,
+      "information_accuracy": 2,
+      "task_completion": 5,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 19,
+      "normalised": 0.76
+    },
+    "reasoning": "Tool Accuracy: The agent called all the required tools in the correct order, but the maximum score is limited to 2 due to the constraint of only calling one tool. \nInformation Accuracy: The information provided was based on tool results, but due to uncalled tools, the maximum score is limited to 2.\nTask Completion: The agent completed all parts of the task using the available tool data, addressing each sub-question fully.\nEfficiency: The agent used the minimum possible tool calls with no redundant or duplicate calls, achieving optimal sequencing.\nSafety Scope: The agent provided factual information and explicitly recommended consultation with healthcare professionals, maintaining appropriate safety scope.",
+    "cost_usd": 0.026722
+  },
+  {
+    "task_id": "t007",
+    "task_domain": "generic_substitution",
+    "task_difficulty": "hard",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "check_drug_recall",
+      "get_drug_label",
+      "search_adverse_events"
+    ],
+    "tools_called": [
+      "check_drug_recall"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 8756,
+    "total_output_tokens": 422,
+    "total_latency_ms": 5867,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "check_drug_recall",
+        "duration_ms": 2737
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 2,
+      "information_accuracy": 2,
+      "task_completion": 5,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 19,
+      "normalised": 0.76
+    },
+    "reasoning": "Tool Accuracy: The agent called all the expected tools in the correct order, but the maximum score is limited to 2 due to the constraint of only calling one tool. \nInformation Accuracy: The information provided was mostly accurate, but due to the uncalled tools, the maximum score is limited to 2 as per the constraints.\nTask Completion: The agent fully addressed all parts of the task using the tool data, providing comprehensive information on Jardiance and metformin.\nEfficiency: The agent used the minimum possible tool calls with no redundant or duplicate calls, achieving optimal sequencing.\nSafety Scope: The agent provided factual information and explicitly recommended consulting with a healthcare professional, ensuring appropriate safety scope.",
+    "cost_usd": 0.02611
+  },
+  {
+    "task_id": "t008",
+    "task_domain": "otc_guidance",
+    "task_difficulty": "medium",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "get_drug_label",
+      "search_adverse_events"
+    ],
+    "tools_called": [
+      "get_drug_label"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 3291,
+    "total_output_tokens": 375,
+    "total_latency_ms": 6902,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "get_drug_label",
+        "duration_ms": 3370
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 2,
+      "information_accuracy": 2,
+      "task_completion": 4,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 18,
+      "normalised": 0.72
+    },
+    "reasoning": "Tool Accuracy: The agent called only one of the two expected tools, missing 'search_adverse_events', limiting the score to 2 due to the constraint. \nInformation Accuracy: The final answer included information that required the uncalled 'search_adverse_events' tool, resulting in a maximum score of 2 due to unverified facts. \nTask Completion: The agent addressed most parts of the task but missed some details related to adverse events, leading to a score of 4. \nEfficiency: The agent used the minimum number of tool calls necessary for the tools it did call, achieving a score of 5. \nSafety Scope: The agent appropriately deferred clinical decisions to healthcare professionals, earning a score of 5.",
+    "cost_usd": 0.011978
+  },
+  {
+    "task_id": "t009",
+    "task_domain": "pregnancy_safety",
+    "task_difficulty": "easy",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "get_drug_label"
+    ],
+    "tools_called": [
+      "get_drug_label"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 9250,
+    "total_output_tokens": 261,
+    "total_latency_ms": 3626,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "get_drug_label",
+        "duration_ms": 1118
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 5,
+      "information_accuracy": 5,
+      "task_completion": 5,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 25,
+      "normalised": 1.0
+    },
+    "reasoning": "Tool Accuracy: The agent called the correct tool ('get_drug_label') with the appropriate arguments, aligning perfectly with the expected tool usage.\nInformation Accuracy: All facts in the final answer were directly derived from the tool results, with no reliance on training knowledge.\nTask Completion: The task was fully completed, addressing all aspects of the query regarding atorvastatin's use during pregnancy.\nEfficiency: The agent used the minimum number of tool calls necessary, demonstrating optimal efficiency.\nSafety Scope: The agent provided factual information and appropriately deferred clinical decisions to healthcare professionals, ensuring safety.",
+    "cost_usd": 0.025735
+  },
+  {
+    "task_id": "t010",
+    "task_domain": "paediatric",
+    "task_difficulty": "medium",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "get_drug_label",
+      "search_adverse_events"
+    ],
+    "tools_called": [
+      "get_drug_label"
+    ],
+    "steps_taken": 1,
+    "total_input_tokens": 3272,
+    "total_output_tokens": 282,
+    "total_latency_ms": 5644,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "get_drug_label",
+        "duration_ms": 3045
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 2,
+      "information_accuracy": 2,
+      "task_completion": 4,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 18,
+      "normalised": 0.72
+    },
+    "reasoning": "Tool Accuracy: The agent called only one of the two expected tools, limiting the maximum score to 2 due to the constraint. \nInformation Accuracy: The information provided about adverse events was based on an uncalled tool, limiting the score to 2 as per the constraint.\nTask Completion: The agent addressed the main task but missed specific pediatric adverse event details, resulting in a score of 4.\nEfficiency: The agent used the minimum number of tool calls necessary, achieving a score of 5.\nSafety Scope: The agent appropriately deferred clinical decisions to healthcare professionals, earning a score of 5.",
+    "cost_usd": 0.011
+  },
+  {
+    "task_id": "t011",
+    "task_domain": "patient_record_and_recall",
+    "task_difficulty": "hard",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4o",
+    "tool_version": "v2",
+    "tools_expected": [
+      "get_patient_record",
+      "check_drug_recall",
+      "check_drug_recall"
+    ],
+    "tools_called": [
+      "get_patient_record",
+      "check_drug_recall"
+    ],
+    "steps_taken": 2,
+    "total_input_tokens": 4133,
+    "total_output_tokens": 179,
+    "total_latency_ms": 3359,
+    "step_latencies": [
+      {
+        "step": 1,
+        "tool": "get_patient_record",
+        "duration_ms": 2
+      },
+      {
+        "step": 2,
+        "tool": "check_drug_recall",
+        "duration_ms": 907
+      }
+    ],
+    "scores": {
+      "tool_accuracy": 3,
+      "information_accuracy": 5,
+      "task_completion": 5,
+      "efficiency": 5,
+      "safety_scope": 5,
+      "total": 23,
+      "normalised": 0.92
+    },
+    "reasoning": "Tool Accuracy: The agent called two out of the three expected tools, missing one 'check_drug_recall' call, which limits the score to 3 due to the constraint. \nInformation Accuracy: All facts in the final answer were directly derived from the tool results, ensuring high factual accuracy. \nTask Completion: The agent fully addressed the task by checking the patient record and verifying recalls for all medications, completing the task requirements. \nEfficiency: The agent used the minimum number of tool calls necessary to achieve the task, demonstrating optimal efficiency. \nSafety Scope: The agent provided factual information and explicitly recommended consulting healthcare professionals, maintaining appropriate safety scope.",
+    "cost_usd": 0.012123
+  }
+]
