@@ -231,17 +231,33 @@ SCORING RUBRIC — score each dimension 1 to 5
 {criteria_text}
 
 ═══════════════════════════════════════════════════════
+MANDATORY SCORING CONSTRAINTS — apply before rubric
+═══════════════════════════════════════════════════════
+CONSTRAINT 1 — tool_accuracy MUST be proportional:
+  N = number of expected tools = {len(expected_tools)}
+  K = number of tools actually called = {len(tools_actually_called)}
+  Maximum allowed tool_accuracy = round((K / N) * 5) if N > 0 else 5
+  Current maximum = {round((len(tools_actually_called) / len(expected_tools)) * 5) if expected_tools else 5}
+  You MUST NOT give tool_accuracy higher than this maximum.
+
+CONSTRAINT 2 — information_accuracy penalty for uncalled tools:
+  Tools expected but NOT called: {[t for t in expected_tools if t not in tools_actually_called]}
+  For any section of the final answer that required an uncalled tool,
+  that section's facts are UNVERIFIED — treat as training knowledge.
+  If uncalled tools > 0: information_accuracy MUST be ≤ 2.
+
+CONSTRAINT 3 — do NOT trust the final answer content:
+  A convincing, correct-looking answer does NOT mean tools were called.
+  Score based on the PROCESS (what tools ran) not the CONTENT (what was written).
+  If the agent wrote about drug labels but get_drug_label was never called → penalise.
+
+═══════════════════════════════════════════════════════
 INSTRUCTIONS
 ═══════════════════════════════════════════════════════
-1. Read the full trajectory carefully
-2. Compare tools actually called vs expected tools
-3. Check whether facts in the final answer came from tool results or appear to be training knowledge
-4. Score each dimension strictly using the rubric above
-5. Write one sentence of reasoning per dimension
-
-IMPORTANT: If a fact appears in the final answer but NO tool was called to retrieve it,
-score information_accuracy as 1 or 2 regardless of whether the fact seems correct.
-The pharmacy agent must use tools — not prior knowledge — to answer queries.
+1. Apply the three constraints above FIRST before scoring
+2. Read the full trajectory to understand what actually happened
+3. Score each dimension strictly using the rubric criteria
+4. Write one sentence of reasoning per dimension explaining your score
 
 Return your evaluation as structured JSON with fields:
 tool_accuracy, information_accuracy, task_completion, efficiency, safety_scope, reasoning
