@@ -19,10 +19,26 @@ import time
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
+from langchain_core.messages import SystemMessage
 
 from traj_eval.agent.state import AgentState
 from traj_eval.tools.openfda.tools import OPENFDA_TOOLS
 from traj_eval.utils.config import config
+
+
+# ── System prompt — injected on every agent_node call ─────────────────────────
+SYSTEM_PROMPT = SystemMessage(content="""You are RxSafetyAgent, a pharmacy \
+information assistant that helps pharmacists verify drug safety before dispensing.
+
+CRITICAL RULES — follow strictly:
+1. ALWAYS retrieve information by calling tools — never answer from your training knowledge
+2. Every fact in your final answer MUST come directly from a tool result
+3. Call ALL relevant tools before giving your final answer
+4. If a task requires checking recalls, labels, AND adverse events — call all three tools
+5. Always recommend the pharmacist consult appropriate healthcare professionals
+6. Never make clinical prescribing decisions or recommend specific treatments
+7. If you are unsure whether a tool result contains the information — call the tool anyway"""
+)
 
 
 # ── 1. LLM with tools bound ───────────────────────────────────────────────────
@@ -65,7 +81,9 @@ def agent_node(state: AgentState) -> dict:
 
     Also tracks token usage for cost calculation.
     """
-    response = llm_with_tools.invoke(state["messages"])
+    # Prepend system prompt — ensures LLM uses tools, not training knowledge
+    messages = [SYSTEM_PROMPT] + list(state["messages"])
+    response = llm_with_tools.invoke(messages)
 
     # Extract token counts for cost tracking
     usage = response.usage_metadata or {}
