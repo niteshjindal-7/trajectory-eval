@@ -141,7 +141,7 @@ def evaluate_and_print(state: dict, task: dict) -> TrajectoryScore:
     tools_called = [s["tool"] for s in state.get("step_latencies", [])]
 
     print("\n" + "═" * 55)
-    print("TRAJECTORY EVALUATION REPORT")
+    print("TRAJECTORY EVALUATION")
     print("═" * 55)
     print(f"Task:            {task.get('id', '?')} — {task.get('domain', '?')}")
     print(f"Evaluator model: {config.OPENAI_EVAL_MODEL if config.LLM_PROVIDER == 'openai' else config.GEMINI_EVAL_MODEL}")

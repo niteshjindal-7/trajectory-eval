@@ -1,11 +1,8 @@
 """
-Professor Demo — Agent Run + Trajectory Evaluation
+Agent run + trajectory evaluation test.
 
-Runs the RxSafetyAgent on a healthcare task, then evaluates
+Runs the RxSafetyAgent on a healthcare task, then scores
 the trajectory using the LLM-as-judge evaluator.
-
-Demonstrates RQ2: Can LLM-as-a-judge reliably catch agent failures
-(hallucination, missing tool calls) that look correct to the human eye?
 
 Run: python3 sandbox/test_evaluator.py
 """
@@ -29,7 +26,7 @@ with open(TASK_FILE) as f:
 task = next(t for t in all_tasks if t["id"] == "t006")
 
 print("=" * 55)
-print("RxSafetyAgent — Professor Demo")
+print("RxSafetyAgent — Trajectory Evaluation")
 print("=" * 55)
 print(f"Task ID:    {task['id']}")
 print(f"Domain:     {task['domain']}")
