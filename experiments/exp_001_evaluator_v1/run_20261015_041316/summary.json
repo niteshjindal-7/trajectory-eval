@@ -1,0 +1,18 @@
+{
+  "experiment_name": "exp_001_evaluator_v1",
+  "run_folder": "run_20261015_041316",
+  "timestamp": "2026-10-15T04:14:27.417258",
+  "llm_provider": "openai",
+  "task_model": "gpt-4o",
+  "eval_model": "gpt-4o",
+  "tool_version": "v2",
+  "tasks_total": 11,
+  "tasks_successful": 11,
+  "tasks_failed": 0,
+  "avg_score": 20.64,
+  "min_score": 16,
+  "max_score": 25,
+  "total_cost_usd": 0.19718,
+  "avg_cost_usd": 0.01793,
+  "avg_latency_ms": 2230
+}
