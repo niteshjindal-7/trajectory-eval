@@ -32,7 +32,9 @@ env/
 
 # Large generated data (use Git LFS if needed later)
 data/trajectories/
-experiments/*/results.json
+# Allow timestamped run folders (run_YYYYMMDD_HHMMSS/) — these are small and meaningful
+# Ignore only the legacy flat results.json at experiment root level
+experiments/*/result_*.json
 
 # IDE
 .vscode/settings.json

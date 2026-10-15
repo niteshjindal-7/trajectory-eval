@@ -17,6 +17,7 @@ Or from command line:
 
 from __future__ import annotations
 
+import csv
 import json
 import os
 import time
@@ -164,7 +165,7 @@ def run_experiment(
     if task_ids:
         all_tasks = [t for t in all_tasks if t["id"] in task_ids]
 
-    # Setup experiment folder
+    # Setup timestamped run folder — never overwrites previous runs
     if not experiment_name:
         experiment_name = config.EXPERIMENT_NAME
 
@@ -174,7 +175,9 @@ def run_experiment(
         else config.GEMINI_TASK_MODEL
     )
 
-    output_dir = f"experiments/{experiment_name}"
+    run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_folder = f"run_{run_timestamp}"
+    output_dir = f"experiments/{experiment_name}/{run_folder}"
     os.makedirs(output_dir, exist_ok=True)
 
     print("=" * 60)
@@ -185,7 +188,7 @@ def run_experiment(
     print(f"Task model:   {model}")
     print(f"Eval model:   {config.OPENAI_EVAL_MODEL if config.LLM_PROVIDER == 'openai' else config.GEMINI_EVAL_MODEL}")
     print(f"Tool version: {config.TOOL_VERSION}")
-    print(f"Output:       {output_dir}/")
+    print(f"Run folder:   {output_dir}/")
     print("-" * 60)
 
     # Run all tasks
@@ -194,10 +197,48 @@ def run_experiment(
         record = run_task(task, verbose=True)
         results.append(record)
 
-    # Save full results
+    # Save full results as JSON
     results_path = f"{output_dir}/results.json"
     with open(results_path, "w") as f:
         json.dump(results, f, indent=2)
+
+    # Save results as CSV
+    csv_path = f"{output_dir}/results.csv"
+    csv_columns = [
+        "task_id", "task_domain", "task_difficulty",
+        "llm_provider", "llm_model", "tool_version",
+        "tools_expected_count", "tools_called_count", "tools_called",
+        "tool_accuracy", "information_accuracy", "task_completion",
+        "efficiency", "safety_scope", "total_score", "normalised_score",
+        "input_tokens", "output_tokens", "cost_usd", "total_latency_ms",
+    ]
+    with open(csv_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=csv_columns)
+        writer.writeheader()
+        for r in results:
+            if r.get("scores"):
+                writer.writerow({
+                    "task_id":               r.get("task_id", ""),
+                    "task_domain":           r.get("task_domain", ""),
+                    "task_difficulty":       r.get("task_difficulty", ""),
+                    "llm_provider":          r.get("llm_provider", ""),
+                    "llm_model":             r.get("llm_model", ""),
+                    "tool_version":          r.get("tool_version", ""),
+                    "tools_expected_count":  len(r.get("tools_expected", [])),
+                    "tools_called_count":    len(r.get("tools_called", [])),
+                    "tools_called":          "|".join(r.get("tools_called", [])),
+                    "tool_accuracy":         r["scores"]["tool_accuracy"],
+                    "information_accuracy":  r["scores"]["information_accuracy"],
+                    "task_completion":       r["scores"]["task_completion"],
+                    "efficiency":            r["scores"]["efficiency"],
+                    "safety_scope":          r["scores"]["safety_scope"],
+                    "total_score":           r["scores"]["total"],
+                    "normalised_score":      r["scores"]["normalised"],
+                    "input_tokens":          r.get("total_input_tokens", 0),
+                    "output_tokens":         r.get("total_output_tokens", 0),
+                    "cost_usd":              r.get("cost_usd", 0),
+                    "total_latency_ms":      r.get("total_latency_ms", 0),
+                })
 
     # Calculate summary statistics
     successful = [r for r in results if r.get("scores")]
@@ -213,6 +254,7 @@ def run_experiment(
 
     summary = {
         "experiment_name":   experiment_name,
+        "run_folder":        run_folder,
         "timestamp":         datetime.now().isoformat(),
         "llm_provider":      config.LLM_PROVIDER,
         "task_model":        model,
@@ -257,8 +299,10 @@ def run_experiment(
     print("=" * 60)
     print(f"Average score:   {summary['avg_score']}/25")
     print(f"Total cost:      ${summary['total_cost_usd']}")
-    print(f"Results saved:   {results_path}")
-    print(f"Summary saved:   {summary_path}")
+    print(f"Run folder:      {output_dir}/")
+    print(f"  results.json   {results_path}")
+    print(f"  results.csv    {csv_path}")
+    print(f"  summary.json   {summary_path}")
 
     return summary
 
