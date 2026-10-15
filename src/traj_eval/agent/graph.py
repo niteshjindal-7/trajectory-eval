@@ -22,7 +22,10 @@ from langgraph.prebuilt import ToolNode
 from langchain_core.messages import SystemMessage
 
 from traj_eval.agent.state import AgentState
-from traj_eval.tools.openfda.tools import OPENFDA_TOOLS
+if config.TOOL_VERSION == "v2":
+    from traj_eval.tools.openfda.tool_box.tools_v2 import OPENFDA_TOOLS
+else:
+    from traj_eval.tools.openfda.tool_box.tools_v1 import OPENFDA_TOOLS
 from traj_eval.utils.config import config
 
 

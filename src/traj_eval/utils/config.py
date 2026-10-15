@@ -42,6 +42,11 @@ class Config:
     OPENFDA_API_KEY: str = os.getenv("OPENFDA_API_KEY", "")
     # Optional — increases rate limit from 240 to 1000 req/min
 
+    # ── Tool Version ──────────────────────────────────────────────────────────
+    TOOL_VERSION: str    = os.getenv("TOOL_VERSION", "v1")
+    # "v1" = original tools (tools_v1.py)
+    # "v2" = constrained scope-explicit tools (tools_v2.py)
+
     # ── Experiment Settings ───────────────────────────────────────────────────
     MAX_STEPS: int       = int(os.getenv("MAX_STEPS", "10"))
     EXPERIMENT_NAME: str = os.getenv("EXPERIMENT_NAME", "exp_001_evaluator_v1")
