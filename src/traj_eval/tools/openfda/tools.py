@@ -62,70 +62,75 @@ def search_adverse_events(drug_name: str, limit: int = 10) -> dict:
         dict with:
           - drug: name searched
           - total_reports: total number of adverse event reports in FDA database
-          - top_reactions: list of {term, count} — most reported reactions
           - serious_count: number of reports flagged as serious
+          - top_reactions: list of {term, count} — most frequently reported reactions
+          - serious_reactions: list of {term, count} — top reactions from serious reports only
+                               (clinically important rare reactions like lactic acidosis appear here)
+          - note: disclaimer about voluntary reporting nature of FAERS data
     """
     url = f"{OPENFDA_BASE_URL}/drug/event.json"
-
-    # Step 1: Get top reactions (count/aggregate mode)
-    # Single OR query — works whether user passes generic name or brand name
-    params = _build_params(
-        search=(
-            f'patient.drug.openfda.generic_name:"{drug_name}"'
-            f'+patient.drug.openfda.brand_name:"{drug_name}"'
-        ),
-        extra={
-            "count": "patient.reaction.reactionmeddrapt.exact",
-            "limit": limit
-        }
+    base_search = (
+        f'patient.drug.openfda.generic_name:"{drug_name}"'
+        f'+patient.drug.openfda.brand_name:"{drug_name}"'
     )
 
+    # Step 1: Get top reactions by frequency (most commonly reported)
+    params = _build_params(
+        search=base_search,
+        extra={"count": "patient.reaction.reactionmeddrapt.exact", "limit": limit}
+    )
     try:
-        response = requests.get(url, params=params, timeout=10)
-        reaction_data = response.json()
+        reaction_data = requests.get(url, params=params, timeout=10).json()
     except Exception as e:
         return {"error": str(e), "drug": drug_name}
 
     if not reaction_data.get("results"):
-        return {"error": f"Drug '{drug_name}' not found in FDA database"}
+        return {
+            "drug": drug_name,
+            "total_reports": 0,
+            "serious_count": 0,
+            "top_reactions": [],
+            "serious_reactions": [],
+            "note": f"No adverse event reports found for '{drug_name}' in FDA FAERS database."
+        }
 
-    # Step 2: Get total reports (all — serious + non-serious)
-    total_params = _build_params(
-        search=(
-            f'patient.drug.openfda.generic_name:"{drug_name}"'
-            f'+patient.drug.openfda.brand_name:"{drug_name}"'
-        ),
-        extra={"limit": 1}
-    )
+    # Step 2: Get total report count
     try:
-        total_response = requests.get(url, params=total_params, timeout=10)
-        total_data = total_response.json()
+        total_data = requests.get(url, params=_build_params(search=base_search, extra={"limit": 1}), timeout=10).json()
         total_reports = total_data.get("meta", {}).get("results", {}).get("total", 0)
     except Exception:
         total_reports = "unavailable"
 
-    # Step 3: Get serious report count only
-    serious_params = _build_params(
-        search=(
-            f'patient.drug.openfda.generic_name:"{drug_name}"'
-            f'+patient.drug.openfda.brand_name:"{drug_name}"'
-            f'+AND+serious:1'
-        ),
-        extra={"limit": 1}
-    )
+    # Step 3: Get serious report count — parenthesise OR group to fix precedence (W2 fix)
+    serious_search = f'({base_search})+AND+serious:1'
     try:
-        serious_response = requests.get(url, params=serious_params, timeout=10)
-        serious_data = serious_response.json()
+        serious_data = requests.get(url, params=_build_params(search=serious_search, extra={"limit": 1}), timeout=10).json()
         serious_count = serious_data.get("meta", {}).get("results", {}).get("total", 0)
     except Exception:
         serious_count = "unavailable"
+
+    # Step 4: Get top reactions specifically from serious reports (W1 fix)
+    # Rare but serious reactions (e.g., lactic acidosis) appear here even if rare overall
+    try:
+        serious_reactions_data = requests.get(
+            url,
+            params=_build_params(
+                search=serious_search,
+                extra={"count": "patient.reaction.reactionmeddrapt.exact", "limit": 10}
+            ),
+            timeout=10
+        ).json()
+        serious_reactions = serious_reactions_data.get("results", [])
+    except Exception:
+        serious_reactions = []
 
     return {
         "drug": drug_name,
         "total_reports": total_reports,
         "serious_count": serious_count,
         "top_reactions": reaction_data.get("results", []),
-        "note": "These are voluntary reports to FDA — suspicion of cause, not confirmed."
+        "serious_reactions": serious_reactions,
+        "note": "Voluntary reports to FDA — suspicion of cause, not confirmed. serious_reactions shows top reactions from serious/fatal cases only."
     }
 
 
@@ -152,7 +157,9 @@ def get_drug_label(drug_name: str) -> dict:
           - drug: name searched
           - brand_names: list of brand names
           - generic_name: standardised generic name
-          - boxed_warning: black box warning text (if exists — most serious)
+          - manufacturer: drug manufacturer name
+          - pharmacological_class: drug class (e.g., "Vitamin K Antagonist")
+          - boxed_warning: black box warning text (most serious — empty list if none)
           - indications_and_usage: what conditions it treats
           - contraindications: when NOT to use
           - warnings_and_cautions: important safety information
@@ -160,11 +167,11 @@ def get_drug_label(drug_name: str) -> dict:
           - geriatric_use: safety information for elderly patients
           - pregnancy: safety in pregnancy
           - pediatric_use: safety in children
-          - dosage_and_administration: how to take it
+          - dosage_and_administration: how to take it (dose, frequency, route)
+          - storage_and_handling: storage temperature and conditions
           - adverse_reactions: side effects from clinical trials
     """
     url = f"{OPENFDA_BASE_URL}/drug/label.json"
-    # Single OR query — works whether user passes generic name or brand name
     params = _build_params(
         search=(
             f'openfda.generic_name:"{drug_name}"'
@@ -179,18 +186,23 @@ def get_drug_label(drug_name: str) -> dict:
     except Exception as e:
         return {"error": str(e), "drug": drug_name}
 
+    # C1 fix: structured empty response instead of error dict
     if not data.get("results"):
-        return {"error": f"No label found for drug: {drug_name}", "drug": drug_name}
+        return {
+            "drug": drug_name,
+            "found": False,
+            "note": f"No FDA label found for '{drug_name}'. Drug may not be in FDA database or spelling may differ."
+        }
 
     label = data["results"][0]
     openfda = label.get("openfda", {})
 
-    # Extract key sections — return only what's useful, not the entire label
     return {
         "drug": drug_name,
         "brand_names": openfda.get("brand_name", []),
         "generic_name": openfda.get("generic_name", []),
         "manufacturer": openfda.get("manufacturer_name", []),
+        "pharmacological_class": openfda.get("pharm_class_epc", []),
         "boxed_warning": label.get("boxed_warning", []),
         "indications_and_usage": label.get("indications_and_usage", []),
         "contraindications": label.get("contraindications", []),
@@ -200,8 +212,8 @@ def get_drug_label(drug_name: str) -> dict:
         "pregnancy": label.get("pregnancy", []),
         "pediatric_use": label.get("pediatric_use", []),
         "dosage_and_administration": label.get("dosage_and_administration", []),
+        "storage_and_handling": label.get("storage_and_handling", []),   # C2 fix
         "adverse_reactions": label.get("adverse_reactions", []),
-        "pharmacological_class": openfda.get("pharm_class_epc", []),
     }
 
 
@@ -265,8 +277,16 @@ def check_drug_recall(drug_name: str, status: str = "Ongoing") -> dict:
     except Exception as e:
         return {"error": str(e), "drug": drug_name}
 
+    # C1 fix: structured empty response — "no recalls found" is a VALID result, not an error
     if not data.get("results"):
-        return {"error": f"No recalls found for drug: {drug_name}", "drug": drug_name}
+        return {
+            "drug": drug_name,
+            "status_filter": status or "all",
+            "active_recalls_found": False,
+            "total_recalls": 0,
+            "recalls": [],
+            "note": f"No {'active ' if status == 'Ongoing' else ''}recalls found for '{drug_name}'. Safe to proceed with dispensing from a recall perspective."
+        }
 
     results = data.get("results", [])
     total = data.get("meta", {}).get("results", {}).get("total", 0)

@@ -37,7 +37,9 @@ CRITICAL RULES — follow strictly:
 4. If a task requires checking recalls, labels, AND adverse events — call all three tools
 5. Always recommend the pharmacist consult appropriate healthcare professionals
 6. Never make clinical prescribing decisions or recommend specific treatments
-7. If you are unsure whether a tool result contains the information — call the tool anyway"""
+7. If you are unsure whether a tool result contains the information — call the tool, but never re-call the same tool with the same arguments
+8. If a tool returns no results or active_recalls_found is False — that IS a valid answer; report it clearly and move on
+9. If a task mentions a patient ID (e.g., P001, P002) — call get_patient_record FIRST to find their medications, then call other tools for each medication found"""
 )
 
 
@@ -90,8 +92,8 @@ def agent_node(state: AgentState) -> dict:
     input_tokens  = usage.get("input_tokens", 0)
     output_tokens = usage.get("output_tokens", 0)
 
-    # Record end_time only when giving final answer (no tool calls pending)
-    end_time = time.time() if not response.tool_calls else state.get("end_time", 0.0)
+    # Always update end_time — ensures valid duration even if max_steps is hit (W3 fix)
+    end_time = time.time()
 
     # Determine model name for tracking
     model_name = (

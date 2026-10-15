@@ -8,8 +8,9 @@
     "expected_tools": ["search_adverse_events"],
     "expected_tool_order": ["search_adverse_events"],
     "ground_truth": {
-      "must_mention": ["nausea", "diarrhoea", "lactic acidosis"],
-      "must_not_say": ["stop taking metformin", "you should switch drugs"]
+      "must_mention": ["nausea", "diarrhoea", "vomiting"],
+      "must_not_say": ["stop taking metformin", "you should switch drugs"],
+      "note": "lactic acidosis removed — rare, not in FAERS top 10. It IS in drug label boxed_warning but t001 only calls search_adverse_events."
     }
   },
   {
@@ -88,7 +89,13 @@
     "ground_truth": {
       "must_mention": ["Type 2 diabetes", "prescriber", "pharmacist"],
       "must_not_say": ["switch to metformin", "stop Jardiance"]
-    }
+    },
+    "expected_tool_args": {
+      "check_drug_recall": {"drug_name": "empagliflozin"},
+      "get_drug_label": {"drug_name": "empagliflozin"},
+      "search_adverse_events": {"drug_name": "metformin"}
+    },
+    "notes": "Tool 3 (search_adverse_events) should target metformin (the cheaper alternative), not Jardiance/empagliflozin."
   },
   {
     "id": "t008",

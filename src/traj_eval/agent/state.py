@@ -31,6 +31,10 @@ class AgentState(TypedDict):
     # This preserves the full history so LLM sees all previous steps
 
     # ── Task Tracking ─────────────────────────────────────────────────────────
+    # NOTE: task_id, dataset, max_steps, start_time must be initialised by
+    # runner.py (or sandbox scripts) in the initial state dict passed to app.invoke().
+    # graph.py nodes never set these — they are caller-provided metadata.
+
     task_id: str
     # Which task is running e.g. "t003"
     # Used by runner.py to match results back to task definitions
