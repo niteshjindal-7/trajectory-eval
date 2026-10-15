@@ -41,7 +41,7 @@ def _build_params(search: str, extra: dict = None) -> dict:
 # ── Tool 1: Adverse Events ────────────────────────────────────────────────────
 
 @tool
-def search_adverse_events(drug_name: str, limit: int = 10) -> dict:
+def search_adverse_events(drug_name: str, limit: int = 25) -> dict:
     """Search FDA adverse event reports (FAERS) for a drug.
 
     Use this tool when the task involves:
@@ -56,16 +56,14 @@ def search_adverse_events(drug_name: str, limit: int = 10) -> dict:
 
     Args:
         drug_name: Generic or brand name of the drug (e.g., "warfarin", "metformin")
-        limit: Number of top reactions to return (default 10, max 100)
+        limit: Number of top reactions to return (default 25, max 100)
 
     Returns:
         dict with:
           - drug: name searched
           - total_reports: total number of adverse event reports in FDA database
           - serious_count: number of reports flagged as serious
-          - top_reactions: list of {term, count} — most frequently reported reactions
-          - serious_reactions: list of {term, count} — top reactions from serious reports only
-                               (clinically important rare reactions like lactic acidosis appear here)
+          - top_reactions: list of {term, count} — most reported reactions (default top 25)
           - note: disclaimer about voluntary reporting nature of FAERS data
     """
     url = f"{OPENFDA_BASE_URL}/drug/event.json"
@@ -90,7 +88,6 @@ def search_adverse_events(drug_name: str, limit: int = 10) -> dict:
             "total_reports": 0,
             "serious_count": 0,
             "top_reactions": [],
-            "serious_reactions": [],
             "note": f"No adverse event reports found for '{drug_name}' in FDA FAERS database."
         }
 
@@ -109,28 +106,12 @@ def search_adverse_events(drug_name: str, limit: int = 10) -> dict:
     except Exception:
         serious_count = "unavailable"
 
-    # Step 4: Get top reactions specifically from serious reports (W1 fix)
-    # Rare but serious reactions (e.g., lactic acidosis) appear here even if rare overall
-    try:
-        serious_reactions_data = requests.get(
-            url,
-            params=_build_params(
-                search=serious_search,
-                extra={"count": "patient.reaction.reactionmeddrapt.exact", "limit": 10}
-            ),
-            timeout=10
-        ).json()
-        serious_reactions = serious_reactions_data.get("results", [])
-    except Exception:
-        serious_reactions = []
-
     return {
         "drug": drug_name,
         "total_reports": total_reports,
         "serious_count": serious_count,
         "top_reactions": reaction_data.get("results", []),
-        "serious_reactions": serious_reactions,
-        "note": "Voluntary reports to FDA — suspicion of cause, not confirmed. serious_reactions shows top reactions from serious/fatal cases only."
+        "note": "Voluntary reports to FDA — suspicion of cause, not confirmed."
     }
 
 
